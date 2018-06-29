@@ -12,7 +12,6 @@ import java.util.List;
 public class Contact {
 
     @PrimaryKey(autoGenerate = true)
-    @NonNull
     @ColumnInfo(name = "id")
     private int id;
 
