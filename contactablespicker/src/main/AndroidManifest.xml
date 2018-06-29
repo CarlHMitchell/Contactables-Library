@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.github.carlhmitchell.contactablespicker">
+
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <application>
+        <activity
+            android:name=".ContactsList"
+            android:label="@string/title_activity_contacts_list"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+    </application>
+
+</manifest>
