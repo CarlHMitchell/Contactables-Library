@@ -34,6 +34,7 @@ public abstract class ContactsDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                                     ContactsDatabase.class,
                                                     "contacts_database")
+                                   .addCallback(sRoomDatabaseCallback)
                                    .build();
                 }
             }
