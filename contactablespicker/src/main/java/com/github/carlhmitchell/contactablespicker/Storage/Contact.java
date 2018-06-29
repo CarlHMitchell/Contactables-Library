@@ -79,8 +79,10 @@ public class Contact {
             return "" + id + "," + contactName + "," + phoneNumbers.toString() + "," + emailAddresses.toString();
         } else if (phoneNumbers == null) {
             return "" + id + "," + contactName + "," + "[\"\"]" + "," + emailAddresses.toString();
+        } else if (emailAddresses == null){
+            return "" + id + "," + contactName + "," + phoneNumbers.toString() + "," + "[\"\"]";
         } else {
-            return "" + id + "," + contactName + "," + emailAddresses.toString() + "," + "[\"\"]";
+            return "" + id + "," + contactName + "," + "[\"\"]" + "," + "[\"\"]";
         }
     }
 
