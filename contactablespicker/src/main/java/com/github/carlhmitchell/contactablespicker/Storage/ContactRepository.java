@@ -5,29 +5,54 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.github.carlhmitchell.contactablespicker.utils.AppExecutor;
+
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class ContactRepository {
+    private static final String DEBUG_TAG = "ContactRepository";
+
     private ContactDAO mContactDAO;
-    private List<Contact> mAllContacts;
-    private LiveData<List<Contact>> mAllContactsLD;
+    public static LiveData<List<Contact>> mAllContactsLD;
 
     public ContactRepository(Context context) {
         ContactsDatabase db = ContactsDatabase.getDatabase(context.getApplicationContext());
         mContactDAO = db.contactDAO();
-        mAllContacts = mContactDAO.getAll();
-        mAllContactsLD = mContactDAO.getAllLD();
+        getAllContactsLD();
     }
 
 
-    public LiveData<List<Contact>> getAllContactsLD() {
 
-        return mAllContactsLD;
+    private static class GetAllContactsLDAsyncTask extends AsyncTask<Void, Void, LiveData<List<Contact>>> {
+        private ContactDAO mAsyncTaskDao;
+
+        GetAllContactsLDAsyncTask(ContactDAO dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected LiveData<List<Contact>> doInBackground(Void... voids) {
+            LiveData<List<Contact>> tempList = mAsyncTaskDao.getAllLD();
+            Log.d(DEBUG_TAG, "Got all contacts as LiveData");
+            return tempList;
+        }
+
+        @Override
+        protected void onPostExecute(LiveData<List<Contact>> list) {
+        }
     }
 
 
-    public List<Contact> getAllContacts() {
-        return mAllContacts;
+
+    public void getAllContactsLD() {
+        try {
+            mAllContactsLD = new GetAllContactsLDAsyncTask(mContactDAO).execute().get();
+        } catch (InterruptedException e) {
+            Log.e(DEBUG_TAG, "Error, got Interrupted Exception:\n" + e);
+        } catch (ExecutionException e) {
+            Log.e(DEBUG_TAG, "Error, got Execution exception:\n" + e);
+        }
     }
 
     public int getCount() {
@@ -52,7 +77,7 @@ public class ContactRepository {
         @Override
         protected Void doInBackground(final Contact... params) {
             mAsyncTaskDao.insert(params[0]);
-            Log.d("ContactRepository", "Inserted contact: " + params[0].toString());
+            Log.d(DEBUG_TAG, "Inserted contact: " + params[0].toString());
             return null;
         }
     }

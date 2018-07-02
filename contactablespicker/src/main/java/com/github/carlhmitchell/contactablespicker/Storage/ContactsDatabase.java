@@ -22,7 +22,9 @@ public abstract class ContactsDatabase extends RoomDatabase {
                 @Override
                 public void onOpen(@NonNull SupportSQLiteDatabase db) {
                     super.onOpen(db);
-                    new PopulateDbAsync(INSTANCE).execute();
+                    // If you want to keep the data through app restarts,
+                    // comment out the following line.
+                    //new PopulateTestDbAsync(INSTANCE).execute();
                 }
             };
 
@@ -34,6 +36,7 @@ public abstract class ContactsDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                                     ContactsDatabase.class,
                                                     "contacts_database")
+                                   .allowMainThreadQueries()
                                    .addCallback(sRoomDatabaseCallback)
                                    .build();
                 }
@@ -60,10 +63,25 @@ public abstract class ContactsDatabase extends RoomDatabase {
 
     public abstract ContactDAO contactDAO();
 
+
+
     private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
         private final ContactDAO mDao;
 
         PopulateDbAsync(ContactsDatabase db) {
+            mDao = db.contactDAO();
+        }
+
+        @Override
+        protected Void doInBackground(final Void... params) {
+            return null;
+        }
+    }
+
+    private static class PopulateTestDbAsync extends AsyncTask<Void, Void, Void> {
+        private final ContactDAO mDao;
+
+        PopulateTestDbAsync(ContactsDatabase db) {
             mDao = db.contactDAO();
         }
 
@@ -74,7 +92,7 @@ public abstract class ContactsDatabase extends RoomDatabase {
             phonesTest.add("7605937583");
             List<String> emailTest = new ArrayList<>();
             emailTest.add("peregrinebf@gmail.com");
-            Contact contact = new Contact("Test", phonesTest, emailTest);
+            Contact contact = new Contact("PopulateTestDbAsync Name", phonesTest, emailTest);
             mDao.insert(contact);
             return null;
         }

@@ -4,6 +4,7 @@ package com.github.carlhmitchell.contactablespicker;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,17 +16,18 @@ import java.util.List;
 
 public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapter.ContactViewHolder> {
 
-    private final LayoutInflater mInflater;
     private List<Contact> mContacts; // Cached copy of Contacts
 
+    private Context mContext;
+
     ContactsListAdapter(Context context) {
-        mInflater = LayoutInflater.from(context);
+        mContext = context;
     }
 
     @Override
     @NonNull
     public ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.recyclerview_item, parent, false);
+        View itemView = LayoutInflater.from(mContext).inflate(R.layout.recyclerview_item, parent, false);
         return new ContactViewHolder(itemView);
     }
 
@@ -33,14 +35,21 @@ public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapte
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
         if (mContacts != null) {
             Contact current = mContacts.get(position);
-            holder.contactItemView.setText(current.getContact().toString());
+            int contactID = current.getId();
+            String contactName = current.getContactName();
+            holder.contactNameView.setText(contactName);
         } else {
             // Covers the case of data not being ready yet.
-            holder.contactItemView.setText(R.string.no_contacts_to_display);
+            holder.contactNameView.setText(R.string.no_contacts_to_display);
         }
     }
 
-    void setContacts(List<Contact> contacts) {
+
+    /*
+    When data changes this method updates the list of Contacts and notifies the adapter to use
+    the new values in it.
+    */
+    public void setContacts(List<Contact> contacts) {
         mContacts = contacts;
         notifyDataSetChanged();
     }
@@ -56,12 +65,54 @@ public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapte
         }
     }
 
-    class ContactViewHolder extends RecyclerView.ViewHolder {
-        private final TextView contactItemView;
+    public List<Contact> getContacts() {
+        return mContacts;
+    }
 
-        private ContactViewHolder(View itemView) {
+    // Inner class for creating ViewHolders
+    class ContactViewHolder extends RecyclerView.ViewHolder {
+
+        // Class variables for the contact name, phone number, and email views
+        TextView contactItemView;
+        TextView contactNameView;
+        TextView phoneNumberView;
+        TextView emailAddressView;
+        View view;
+
+
+        public ContactViewHolder(View itemView) {
             super(itemView);
-            contactItemView = itemView.findViewById(R.id.recyclerTextView);
+
+            // Define click listener for the ViewHolder's view
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("ContactsListAdapter", "Element " + getAdapterPosition() + " clicked.");
+                }
+            });
+            //contactItemView = itemView.findViewById(R.id.recyclerContactName);
+            contactNameView = itemView.findViewById(R.id.recyclerContactName);
+
+            view = itemView;
         }
+
+        // These getters probably won't be needed.
+
+        public TextView getContactItemView() {
+            return contactItemView;
+        }
+
+        public TextView getContactNameView() {
+            return contactNameView;
+        }
+
+        public TextView getPhoneNumberView() {
+            return phoneNumberView;
+        }
+
+        public TextView getEmailAddressView() {
+            return emailAddressView;
+        }
+
     }
 }

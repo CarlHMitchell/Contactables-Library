@@ -4,10 +4,34 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/recyclerTextView"
-        style="@style/contact_title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/holo_orange_light" />
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <!-- originally had -->
+        <!-- android:layout_width="0dp" -->
+
+    <!-- TextView that displays the contact Name -->
+    <TextView
+        android:id="@+id/recyclerContactName"
+        style="@style/contact_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- TextView that displays the phone numbers -->
+    <TextView
+        android:id="@+id/recyclerPhonesList"
+        style="@style/contact_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- TextView that displays the emails list -->
+    <TextView
+        android:id="@+id/recyclerEmailsList"
+        style="@style/contact_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    </LinearLayout>
 </LinearLayout>
