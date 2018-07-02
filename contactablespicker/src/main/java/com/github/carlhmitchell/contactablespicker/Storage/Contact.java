@@ -26,14 +26,14 @@ public class Contact {
     private List<String> emailAddresses;
 
     @Ignore
-    public Contact(int id, String contactName, List<String> phoneNumbers, List<String> emailAddresses) {
+    public Contact(int id, @NonNull String contactName, List<String> phoneNumbers, List<String> emailAddresses) {
         this.id = id;
         this.contactName = contactName;
         this.phoneNumbers = phoneNumbers;
         this.emailAddresses = emailAddresses;
     }
 
-    public Contact(String contactName, List<String> phoneNumbers, List<String> emailAddresses) {
+    public Contact(@NonNull String contactName, List<String> phoneNumbers, List<String> emailAddresses) {
         //newId();
         this.contactName = contactName;
         this.phoneNumbers = phoneNumbers;
@@ -48,11 +48,12 @@ public class Contact {
         this.id = id;
     }
 
+    @NonNull
     public String getContactName() {
         return contactName;
     }
 
-    public void setContactName(String contactName) {
+    public void setContactName(@NonNull String contactName) {
         this.contactName = contactName;
     }
 
@@ -74,7 +75,7 @@ public class Contact {
 
     public String toString() {
         //Ensure there's data in both phoneNumbers and emailAddresses. If not, set to empty lists.
-        if (phoneNumbers != null && emailAddresses != null) {
+        if ((phoneNumbers != null) && (emailAddresses != null)) {
             return "" + id + "," + contactName + "," + phoneNumbers.toString() + "," + emailAddresses.toString();
         } else if (phoneNumbers == null) {
             return "" + id + "," + contactName + "," + "[\"\"]" + "," + emailAddresses.toString();

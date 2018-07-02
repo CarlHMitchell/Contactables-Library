@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
  */
 
 
+@SuppressWarnings("SpellCheckingInspection")
 public class AppExecutor {
     // Singleton instantiation
     private static final Object LOCK = new Object();

@@ -8,7 +8,6 @@ import android.util.Log;
 
 import com.github.carlhmitchell.contactablespicker.Storage.Contact;
 import com.github.carlhmitchell.contactablespicker.Storage.ContactRepository;
-import com.github.carlhmitchell.contactablespicker.Storage.ContactsDatabase;
 
 import java.util.List;
 
@@ -31,8 +30,8 @@ public class ContactsListViewModel extends AndroidViewModel {
         super(application);
 
         repository = new ContactRepository(application);
-        Log.i("ContactsList View Model", "Retreiving data from database");
-        contactsList = repository.mAllContactsLD;
+        Log.i("ContactsList View Model", "Retrieving data from database");
+        contactsList = ContactRepository.mAllContactsLD;
     }
 
     public LiveData<List<Contact>> getContactsList() {

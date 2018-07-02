@@ -10,8 +10,9 @@
         android:id="@+id/show_picker_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Show Picker"
+        android:layout_marginTop="8dp"
+        android:text="@string/show_picker"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="49dp" />
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

@@ -20,14 +20,14 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.github.carlhmitchell.contactablespicker.Storage.Contact;
-import com.github.carlhmitchell.contactablespicker.Storage.ContactRepository;
-import com.github.carlhmitchell.contactablespicker.Storage.ContactsDatabase;
 import com.github.carlhmitchell.contactablespicker.utils.AppExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.provider.ContactsContract.CommonDataKinds.*;
+import static android.provider.ContactsContract.CommonDataKinds.Email;
+import static android.provider.ContactsContract.CommonDataKinds.Identity;
+import static android.provider.ContactsContract.CommonDataKinds.Phone;
 import static com.github.carlhmitchell.contactablespicker.utils.AppConstants.CONTACT_PICKER_RESULT;
 
 public class ContactsList extends AppCompatActivity {
@@ -40,10 +40,10 @@ public class ContactsList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts_list);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,7 +51,7 @@ public class ContactsList extends AppCompatActivity {
             }
         });
 
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.contacts_list_recycler_view);
+        RecyclerView mRecyclerView = findViewById(R.id.contacts_list_recycler_view);
 
         // Set to true to improve performance if changes in content do not change the layout size of
         // the RecyclerView
