@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.github.carlhmitchell.contactablespicker.Storage.Contact;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapter.ContactViewHolder> {
@@ -24,6 +25,14 @@ public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapte
         mContext = context;
     }
 
+    public ContactsListAdapter(Context context, List<Contact> contactList) {
+        mContacts = contactList;
+        mContext = context;
+    }
+
+    /*
+     *   Inflates the layout for each list item
+     */
     @Override
     @NonNull
     public ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -31,6 +40,9 @@ public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapte
         return new ContactViewHolder(itemView);
     }
 
+    /*
+     *  Configures layouts for the list item (sets text to TextViews)
+     */
     @Override
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
         if (mContacts != null) {
@@ -38,6 +50,7 @@ public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapte
             int contactID = current.getId();
             String contactName = current.getContactName();
             holder.contactNameView.setText(contactName);
+            List<String> contactPhones = current.getPhoneNumbers();
         } else {
             // Covers the case of data not being ready yet.
             holder.contactNameView.setText(R.string.no_contacts_to_display);
@@ -73,7 +86,6 @@ public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapte
     class ContactViewHolder extends RecyclerView.ViewHolder {
 
         // Class variables for the contact name, phone number, and email views
-        TextView contactItemView;
         TextView contactNameView;
         TextView phoneNumberView;
         TextView emailAddressView;
@@ -90,17 +102,14 @@ public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapte
                     Log.d("ContactsListAdapter", "Element " + getAdapterPosition() + " clicked.");
                 }
             });
-            //contactItemView = itemView.findViewById(R.id.recyclerContactName);
             contactNameView = itemView.findViewById(R.id.recyclerContactName);
+            phoneNumberView = itemView.findViewById(R.id.recyclerPhonesList);
+            emailAddressView = itemView.findViewById(R.id.recyclerEmailsList);
 
             view = itemView;
         }
 
         // These getters probably won't be needed.
-
-        public TextView getContactItemView() {
-            return contactItemView;
-        }
 
         public TextView getContactNameView() {
             return contactNameView;
