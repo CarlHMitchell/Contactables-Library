@@ -77,9 +77,9 @@ public class Contact {
         //Ensure there's data in both phoneNumbers and emailAddresses. If not, set to empty lists.
         if ((phoneNumbers != null) && (emailAddresses != null)) {
             return "" + id + "," + contactName + "," + phoneNumbers.toString() + "," + emailAddresses.toString();
-        } else if (phoneNumbers == null) {
+        } else if (emailAddresses != null) {
             return "" + id + "," + contactName + "," + "[\"\"]" + "," + emailAddresses.toString();
-        } else if (emailAddresses == null){
+        } else if (phoneNumbers != null) {
             return "" + id + "," + contactName + "," + phoneNumbers.toString() + "," + "[\"\"]";
         } else {
             return "" + id + "," + contactName + "," + "[\"\"]" + "," + "[\"\"]";

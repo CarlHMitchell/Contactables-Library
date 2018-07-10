@@ -20,10 +20,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.github.carlhmitchell.contactablespicker.Storage.Contact;
+import com.github.carlhmitchell.contactablespicker.listViewHelpers.ContactsListAdapter;
+import com.github.carlhmitchell.contactablespicker.listViewHelpers.ContactsListViewModel;
 import com.github.carlhmitchell.contactablespicker.listViewHelpers.ContentItem;
 import com.github.carlhmitchell.contactablespicker.listViewHelpers.Header;
 import com.github.carlhmitchell.contactablespicker.listViewHelpers.ListItem;
-import com.github.carlhmitchell.contactablespicker.utils.AppExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +37,8 @@ import static com.github.carlhmitchell.contactablespicker.utils.AppConstants.CON
 
 public class ContactsList extends AppCompatActivity {
 
-    RecyclerView mRecyclerView;
     private ContactsListAdapter mAdapter;
-    public ContactsListViewModel mContactsListViewModel;
+    private ContactsListViewModel mContactsListViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +56,7 @@ public class ContactsList extends AppCompatActivity {
             }
         });
 
-        mRecyclerView = findViewById(R.id.contacts_list_recycler_view);
+        RecyclerView mRecyclerView = findViewById(R.id.contacts_list_recycler_view);
 
         // Set to true to improve performance if changes in content do not change the layout size of
         // the RecyclerView
@@ -106,20 +106,18 @@ public class ContactsList extends AppCompatActivity {
                 final int position = viewHolder.getAdapterPosition();
                 Log.d("ContactsList", "AdapterPosition: " + position);
                 final List<ListItem> list = mAdapter.getmList();
-                final List<Contact> contactList = mAdapter.getContacts();
                 final ListItem item = list.get(position);
                 Log.d("ContactsList", "Item: " + item.toString());
-                long touchedId = list.get(position).getId(); // Need to actually get the id of the previous header
 
                 ListItem currentHeader = new ListItem();
                 for (int i = 0; i <= position; i++) {
                     ListItem tempItem = list.get(i);
-                        if (tempItem instanceof Header) {
-                            currentHeader = tempItem;
-                            Log.d("ListIteration", "Header ID: " + tempItem.getId());
-                        } else {
-                            Log.d("ListIteration", "ID: " + tempItem.getId());
-                        }
+                    if (tempItem instanceof Header) {
+                        currentHeader = tempItem;
+                        Log.d("ListIteration", "Header ID: " + tempItem.getId());
+                    } else {
+                        Log.d("ListIteration", "ID: " + tempItem.getId());
+                    }
                 }
 
                 final long id = currentHeader.getId();
@@ -129,26 +127,18 @@ public class ContactsList extends AppCompatActivity {
                     try {
                         Contact contact = mContactsListViewModel.getContactById(id);
                         mContactsListViewModel.delete(contact);
-                    } catch (InterruptedException ie) {
-                        ie.printStackTrace();
-                    } catch (ExecutionException ee) {
-                        ee.printStackTrace();
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
                     }
                 } else if (item instanceof ContentItem) {
                     Log.d("ContactsList", "Content item found: " + item.getData());
                     String data = item.getData();
                     try {
                         Contact contact = mContactsListViewModel.getContactById(id);
-                        List<String> phoneNumbers =  contact.getPhoneNumbers();
-                        ArrayList<String> numbers = new ArrayList<>();
-                        for (String number : phoneNumbers) {
-                            numbers.add(number);
-                        }
+                        List<String> phoneNumbers = contact.getPhoneNumbers();
+                        ArrayList<String> numbers = new ArrayList<>(phoneNumbers);
                         List<String> emailAddresses = contact.getEmailAddresses();
-                        ArrayList<String> emails = new ArrayList<>();
-                        for (String email : emailAddresses) {
-                            emails.add(email);
-                        }
+                        ArrayList<String> emails = new ArrayList<>(emailAddresses);
                         try {
                             numbers.remove(data);
                             emails.remove(data);
@@ -159,11 +149,8 @@ public class ContactsList extends AppCompatActivity {
                         contact.setPhoneNumbers(numbers);
                         contact.setEmailAddresses(emails);
 
-                        final Contact newContact = contact;
-                        mContactsListViewModel.insert(newContact);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
+                        mContactsListViewModel.insert(contact);
+                    } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
                     }
                 }

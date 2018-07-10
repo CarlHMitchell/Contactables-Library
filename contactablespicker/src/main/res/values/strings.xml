@@ -1,5 +1,4 @@
 <resources>
     <string name="app_name">ContactablesPicker</string>
     <string name="title_activity_contacts_list">ContactsList</string>
-    <string name="no_contacts_to_display">No contacts to display</string>
 </resources>

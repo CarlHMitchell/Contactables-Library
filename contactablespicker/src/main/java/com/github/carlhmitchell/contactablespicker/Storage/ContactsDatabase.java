@@ -8,6 +8,7 @@ import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +17,14 @@ import java.util.List;
 @TypeConverters({DBTypeConverters.class})
 public abstract class ContactsDatabase extends RoomDatabase {
     private static ContactsDatabase INSTANCE;
-    private static RoomDatabase.Callback sRoomDatabaseCallback =
+    private static final RoomDatabase.Callback sRoomDatabaseCallback =
             new RoomDatabase.Callback() {
 
+                //TODO: Move to testing class
                 @Override
                 public void onOpen(@NonNull SupportSQLiteDatabase db) {
                     super.onOpen(db);
+                    Log.d("ContactsDatabase", "Database opened.");
                     // If you want to keep the data through app restarts,
                     // comment out the following line.
                     //new PopulateTestDbAsync(INSTANCE).execute();
@@ -78,6 +81,7 @@ public abstract class ContactsDatabase extends RoomDatabase {
         }
     }
 
+    //TODO: move this to testing code instead of production files.
     private static class PopulateTestDbAsync extends AsyncTask<Void, Void, Void> {
         private final ContactDAO mDao;
 

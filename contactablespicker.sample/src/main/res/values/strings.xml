@@ -1,5 +1,4 @@
 <resources>
     <string name="app_name">ContactablesPicker.Sample</string>
-    <string name="action_settings">Settings</string>
     <string name="show_picker">Show Picker</string>
 </resources>

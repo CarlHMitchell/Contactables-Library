@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutionException;
 public class ContactRepository {
     private static final String DEBUG_TAG = "ContactRepository";
 
-    private ContactDAO mContactDAO;
+    private final ContactDAO mContactDAO;
     public static LiveData<List<Contact>> mAllContactsLD;
 
     public ContactRepository(Context context) {
@@ -23,7 +23,7 @@ public class ContactRepository {
 
 
     private static class GetAllContactsLDAsyncTask extends AsyncTask<Void, Void, LiveData<List<Contact>>> {
-        private ContactDAO mAsyncTaskDao;
+        private final ContactDAO mAsyncTaskDao;
 
         GetAllContactsLDAsyncTask(ContactDAO dao) {
             mAsyncTaskDao = dao;
@@ -43,7 +43,7 @@ public class ContactRepository {
 
 
 
-    public void getAllContactsLD() {
+    private void getAllContactsLD() {
         try {
             mAllContactsLD = new GetAllContactsLDAsyncTask(mContactDAO).execute().get();
         } catch (InterruptedException e) {
@@ -62,7 +62,7 @@ public class ContactRepository {
     }
 
     private static class GetContactByIdAsyncTask extends AsyncTask<Long, Void, Contact> {
-        private ContactDAO mAsyncTaskDao;
+        private final ContactDAO mAsyncTaskDao;
 
         GetContactByIdAsyncTask(ContactDAO dao) {
             mAsyncTaskDao = dao;
@@ -88,7 +88,7 @@ public class ContactRepository {
     }
 
     private static class insertAsyncTask extends AsyncTask<Contact, Void, Void> {
-        private ContactDAO mAsyncTaskDao;
+        private final ContactDAO mAsyncTaskDao;
 
         insertAsyncTask(ContactDAO dao) {
             mAsyncTaskDao = dao;
@@ -103,7 +103,7 @@ public class ContactRepository {
     }
 
     private static class deleteAsyncTask extends AsyncTask<Contact, Void, Void> {
-        private ContactDAO mAsyncTaskDao;
+        private final ContactDAO mAsyncTaskDao;
 
         deleteAsyncTask(ContactDAO dao) {
             mAsyncTaskDao = dao;

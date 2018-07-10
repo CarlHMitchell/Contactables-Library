@@ -4,7 +4,7 @@ import android.arch.persistence.room.TypeConverter;
 import java.util.Arrays;
 import java.util.List;
 
-public class DBTypeConverters {
+class DBTypeConverters {
     @TypeConverter
     public static String listToString(List<String> value) {
         return value.toString();

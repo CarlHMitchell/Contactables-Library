@@ -1,12 +1,14 @@
-package com.github.carlhmitchell.contactablespicker;
+package com.github.carlhmitchell.contactablespicker.listViewHelpers;
 
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.github.carlhmitchell.contactablespicker.R;
 import com.github.carlhmitchell.contactablespicker.Storage.Contact;
 import com.github.carlhmitchell.contactablespicker.listViewHelpers.ContentItem;
 import com.github.carlhmitchell.contactablespicker.listViewHelpers.Header;
@@ -34,13 +36,14 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return mContacts;
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     public List<ListItem> getmList() {
         return mList;
     }
 
     private void getList() {
         ArrayList<ListItem> arrayList = new ArrayList<>();
-        for (Contact contact: mContacts) {
+        for (Contact contact : mContacts) {
             Header header = new Header();
             header.setContactName(contact.getContactName());
             header.setId(contact.getId());
@@ -59,8 +62,9 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         mList = arrayList;
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == TYPE_HEADER) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.header, parent, false);
             return new VHHeader(v);
@@ -71,10 +75,9 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
         if (holder instanceof VHHeader) {
-            // VHHeader VHheader = (VHHeader)holder;
             Header currentItem = (Header) mList.get(position);
             VHHeader VHheader = (VHHeader) holder;
             VHheader.txtTitle.setText(currentItem.getContactName());
@@ -108,18 +111,18 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     class VHHeader extends RecyclerView.ViewHolder {
-        TextView txtTitle;
+        final TextView txtTitle;
 
-        public VHHeader(View itemView) {
+        VHHeader(View itemView) {
             super(itemView);
             this.txtTitle = itemView.findViewById(R.id.text_header);
         }
     }
 
     class VHItem extends RecyclerView.ViewHolder {
-        TextView txtData;
+        final TextView txtData;
 
-        public VHItem(View itemView) {
+        VHItem(View itemView) {
             super(itemView);
             this.txtData = itemView.findViewById(R.id.text_data);
         }

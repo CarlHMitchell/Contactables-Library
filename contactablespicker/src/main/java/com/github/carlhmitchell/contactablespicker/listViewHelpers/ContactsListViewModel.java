@@ -1,4 +1,4 @@
-package com.github.carlhmitchell.contactablespicker;
+package com.github.carlhmitchell.contactablespicker.listViewHelpers;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -18,14 +18,14 @@ import java.util.concurrent.ExecutionException;
  */
 public class ContactsListViewModel extends AndroidViewModel {
 
-    private ContactRepository repository;
+    private final ContactRepository repository;
     /*
      *  Using LiveData and caching what getAllContactsLD() returns has several benefits:
      *  - We can put an Observer on the data (instead of polling for changes) and only update the
      *      UI when the data actually changes.
      *  - The Repository is completely separated from the UI through the ViewModel.
      */
-    private LiveData<List<Contact>> contactsList;
+    private final LiveData<List<Contact>> contactsList;
 
     public ContactsListViewModel(@NonNull Application application) {
         super(application);
