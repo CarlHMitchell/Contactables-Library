@@ -10,7 +10,7 @@
         app:cardElevation="2dp">
 
         <TextView
-            android:id="@+id/txtHeader"
+            android:id="@+id/text_header"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="#DCDCDC"

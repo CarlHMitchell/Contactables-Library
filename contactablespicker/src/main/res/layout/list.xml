@@ -16,7 +16,7 @@
             app:cardElevation="1dp">
 
             <TextView
-                android:id="@+id/txtName"
+                android:id="@+id/text_data"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="abc" />

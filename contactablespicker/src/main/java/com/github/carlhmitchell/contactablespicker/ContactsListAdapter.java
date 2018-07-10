@@ -1,127 +1,123 @@
 package com.github.carlhmitchell.contactablespicker;
 
 
-import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.carlhmitchell.contactablespicker.Storage.Contact;
+import com.github.carlhmitchell.contactablespicker.listViewHelpers.ContentItem;
+import com.github.carlhmitchell.contactablespicker.listViewHelpers.Header;
+import com.github.carlhmitchell.contactablespicker.listViewHelpers.ListItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapter.ContactViewHolder> {
-
+public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_ITEM = 1;
     private List<Contact> mContacts; // Cached copy of Contacts
+    private List<ListItem> mList;
 
-    private Context mContext;
-
-    ContactsListAdapter(Context context) {
-        mContext = context;
+    public ContactsListAdapter(List<Contact> contacts) {
+        setContacts(contacts);
     }
 
-    public ContactsListAdapter(Context context, List<Contact> contactList) {
-        mContacts = contactList;
-        mContext = context;
-    }
-
-    /*
-     *   Inflates the layout for each list item
-     */
-    @Override
-    @NonNull
-    public ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(mContext).inflate(R.layout.recyclerview_item, parent, false);
-        return new ContactViewHolder(itemView);
-    }
-
-    /*
-     *  Configures layouts for the list item (sets text to TextViews)
-     */
-    @Override
-    public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
-        if (mContacts != null) {
-            Contact current = mContacts.get(position);
-            int contactID = current.getId();
-            String contactName = current.getContactName();
-            holder.contactNameView.setText(contactName);
-            List<String> contactPhones = current.getPhoneNumbers();
-        } else {
-            // Covers the case of data not being ready yet.
-            holder.contactNameView.setText(R.string.no_contacts_to_display);
-        }
-    }
-
-
-    /*
-    When data changes this method updates the list of Contacts and notifies the adapter to use
-    the new values in it.
-    */
     public void setContacts(List<Contact> contacts) {
         mContacts = contacts;
+        mList = getList();
         notifyDataSetChanged();
-    }
-
-    // getItemCount() is called many times, and when it is first called,
-    // mContacts has not been updated (means initially, it's null, and we can't return null).
-    @Override
-    public int getItemCount() {
-        if (mContacts != null) {
-            return mContacts.size();
-        } else {
-            return 0;
-        }
     }
 
     public List<Contact> getContacts() {
         return mContacts;
     }
 
-    // Inner class for creating ViewHolders
-    class ContactViewHolder extends RecyclerView.ViewHolder {
+    public ArrayList<ListItem> getList() {
+        ArrayList<ListItem> arrayList = new ArrayList<>();
+        for (Contact contact: mContacts) {
+            Header header = new Header();
+            header.setContactName(contact.getContactName());
+            arrayList.add(header);
+            for (String phoneNumber : contact.getPhoneNumbers()) {
+                ContentItem item = new ContentItem();
+                item.setData(phoneNumber);
+                arrayList.add(item);
+            }
+            for (String email : contact.getEmailAddresses()) {
+                ContentItem item = new ContentItem();
+                item.setData(email);
+                arrayList.add(item);
+            }
+        }
+        return arrayList;
+    }
 
-        // Class variables for the contact name, phone number, and email views
-        TextView contactNameView;
-        TextView phoneNumberView;
-        TextView emailAddressView;
-        View view;
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == TYPE_HEADER) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.header, parent, false);
+            return new VHHeader(v);
+        } else {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list, parent, false);
+            return new VHItem(v);
+        }
+    }
 
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        public ContactViewHolder(View itemView) {
+        if (holder instanceof VHHeader) {
+            // VHHeader VHheader = (VHHeader)holder;
+            Header currentItem = (Header) mList.get(position);
+            VHHeader VHheader = (VHHeader) holder;
+            VHheader.txtTitle.setText(currentItem.getContactName());
+        } else if (holder instanceof VHItem) {
+            ContentItem currentItem = (ContentItem) mList.get(position);
+            VHItem VHitem = (VHItem) holder;
+            VHitem.txtData.setText(currentItem.getData());
+        }
+    }
+
+    public int getItemViewType(int position) {
+        if (isPositionHeader(position)) {
+            return TYPE_HEADER;
+        }
+        return TYPE_ITEM;
+    }
+
+    private boolean isPositionHeader(int position) {
+
+        return mList.get(position) instanceof Header;
+
+    }
+
+    @Override
+    public int getItemCount() {
+        if (mList != null) {
+            return mList.size();
+        } else {
+            return 0; // can't return null for the empty list, so return 0.
+        }
+    }
+
+    class VHHeader extends RecyclerView.ViewHolder {
+        TextView txtTitle;
+
+        public VHHeader(View itemView) {
             super(itemView);
-
-            // Define click listener for the ViewHolder's view
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d("ContactsListAdapter", "Element " + getAdapterPosition() + " clicked.");
-                }
-            });
-            contactNameView = itemView.findViewById(R.id.recyclerContactName);
-            phoneNumberView = itemView.findViewById(R.id.recyclerPhonesList);
-            emailAddressView = itemView.findViewById(R.id.recyclerEmailsList);
-
-            view = itemView;
+            this.txtTitle = itemView.findViewById(R.id.text_header);
         }
+    }
 
-        // These getters probably won't be needed.
+    class VHItem extends RecyclerView.ViewHolder {
+        TextView txtData;
 
-        public TextView getContactNameView() {
-            return contactNameView;
+        public VHItem(View itemView) {
+            super(itemView);
+            this.txtData = itemView.findViewById(R.id.text_data);
         }
-
-        public TextView getPhoneNumberView() {
-            return phoneNumberView;
-        }
-
-        public TextView getEmailAddressView() {
-            return emailAddressView;
-        }
-
     }
 }

@@ -32,6 +32,7 @@ import static com.github.carlhmitchell.contactablespicker.utils.AppConstants.CON
 
 public class ContactsList extends AppCompatActivity {
 
+    RecyclerView mRecyclerView;
     private ContactsListAdapter mAdapter;
     public ContactsListViewModel mContactsListViewModel;
 
@@ -51,22 +52,33 @@ public class ContactsList extends AppCompatActivity {
             }
         });
 
-        RecyclerView mRecyclerView = findViewById(R.id.contacts_list_recycler_view);
+        mRecyclerView = findViewById(R.id.contacts_list_recycler_view);
 
         // Set to true to improve performance if changes in content do not change the layout size of
         // the RecyclerView
-        mRecyclerView.setHasFixedSize(false);
+        mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // specify an adapter
-        mAdapter = new ContactsListAdapter(this);
-        mRecyclerView.setAdapter(mAdapter);
-
         // Get a new or existing ViewModel from the ViewModelProvider
         mContactsListViewModel = ViewModelProviders.of(this).get(ContactsListViewModel.class);
+
+        // Add an observer on the LiveData returned by getContactsList()
+        // The onChanged()) method fires when the observed data changes and the activity is in the
+        // foreground
+        mContactsListViewModel.getContactsList().observe(this, new Observer<List<Contact>>() {
+            @Override
+            public void onChanged(@Nullable final List<Contact> contacts) {
+                // update the cached copy of the contacts in the adapter.
+                mAdapter = new ContactsListAdapter(contacts);
+            }
+        });
+
+        // specify an adapter
+        mRecyclerView.setAdapter(mAdapter);
+
 
         // make mRecyclerView swipe to the left and right.
         // implement delete on swipe.
@@ -106,6 +118,8 @@ public class ContactsList extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        // Is this needed?
+
         // Add an observer on the LiveData returned by getContactsList()
         // The onChanged()) method fires when the observed data changes and the activity is in the
         // foreground
@@ -120,7 +134,6 @@ public class ContactsList extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
         String contactID = "";
         String contactName = "";
         String number;
