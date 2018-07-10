@@ -13,9 +13,10 @@ public class DBTypeConverters {
     @TypeConverter
     public static List<String> stringToList(String values) {
         String stripped = values.substring(1, values.length() - 1);
-        String[] array = stripped.split(",");
+        // List<>.toString() adds spaces between the entries in the list.
+        // Thus both the commas and the spaces need to be stripped when converting the string
+        //   back to a list.
+        String[] array = stripped.split(", ");
         return Arrays.asList(array);
     }
-
-    // TODO: use JSON & Retrieve to store actual Contact objects
 }
