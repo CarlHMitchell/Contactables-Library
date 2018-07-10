@@ -13,7 +13,7 @@ public class Contact {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    private int id;
+    private long id;
 
     @NonNull
     @ColumnInfo(name = "contact_name")
@@ -40,11 +40,11 @@ public class Contact {
         this.emailAddresses = emailAddresses;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

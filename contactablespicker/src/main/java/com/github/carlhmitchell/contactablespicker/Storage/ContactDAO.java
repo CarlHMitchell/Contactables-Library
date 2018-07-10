@@ -18,10 +18,13 @@ public interface ContactDAO {
     LiveData<List<Contact>> getAllLD();
 
     @Query("SELECT * FROM contacts_table WHERE id IN(:ids)")
-    List<Contact> loadAllByIds(int[] ids);
+    List<Contact> loadAllByIds(long[] ids);
 
     @Query("SELECT * FROM contacts_table WHERE id IN(:ids)")
-    LiveData<List<Contact>> loadAllByIdsLD(int[] ids);
+    LiveData<List<Contact>> loadAllByIdsLD(long[] ids);
+
+    @Query("SELECT * FROM contacts_table WHERE id LIKE (:id)")
+    Contact getById(long id);
 
     @Query("SELECT * FROM contacts_table WHERE contact_name LIKE :displayName LIMIT 1")
     Contact findByName(String displayName);

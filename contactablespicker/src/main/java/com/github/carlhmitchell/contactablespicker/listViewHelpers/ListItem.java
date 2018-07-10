@@ -2,7 +2,7 @@ package com.github.carlhmitchell.contactablespicker.listViewHelpers;
 
 public class ListItem {
     private String data;
-    private int id;
+    private long id;
 
     public ListItem() {
     }
@@ -15,11 +15,11 @@ public class ListItem {
         this.data = data;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 }

@@ -57,6 +57,28 @@ public class ContactRepository {
         return mContactDAO.getCount();
     }
 
+    public Contact getById(long id) throws InterruptedException, ExecutionException {
+        return new GetContactByIdAsyncTask(mContactDAO).execute(id).get();
+    }
+
+    private static class GetContactByIdAsyncTask extends AsyncTask<Long, Void, Contact> {
+        private ContactDAO mAsyncTaskDao;
+
+        GetContactByIdAsyncTask(ContactDAO dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Contact doInBackground(final Long... params) {
+            return mAsyncTaskDao.getById(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Contact contact) {
+
+        }
+    }
+
     public void insert(Contact contact) {
         new insertAsyncTask(mContactDAO).execute(contact);
     }

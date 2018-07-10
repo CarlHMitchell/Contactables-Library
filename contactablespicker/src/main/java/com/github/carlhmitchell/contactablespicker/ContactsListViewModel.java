@@ -10,6 +10,7 @@ import com.github.carlhmitchell.contactablespicker.Storage.Contact;
 import com.github.carlhmitchell.contactablespicker.Storage.ContactRepository;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 /*
@@ -36,6 +37,10 @@ public class ContactsListViewModel extends AndroidViewModel {
 
     public LiveData<List<Contact>> getContactsList() {
         return contactsList;
+    }
+
+    public Contact getContactById(long id) throws InterruptedException, ExecutionException{
+        return repository.getById(id);
     }
 
     public void insert(Contact contact) {

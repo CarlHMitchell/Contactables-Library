@@ -20,10 +20,14 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.github.carlhmitchell.contactablespicker.Storage.Contact;
+import com.github.carlhmitchell.contactablespicker.listViewHelpers.ContentItem;
+import com.github.carlhmitchell.contactablespicker.listViewHelpers.Header;
+import com.github.carlhmitchell.contactablespicker.listViewHelpers.ListItem;
 import com.github.carlhmitchell.contactablespicker.utils.AppExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static android.provider.ContactsContract.CommonDataKinds.Email;
 import static android.provider.ContactsContract.CommonDataKinds.Identity;
@@ -59,11 +63,14 @@ public class ContactsList extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // Get a new or existing ViewModel from the ViewModelProvider
         mContactsListViewModel = ViewModelProviders.of(this).get(ContactsListViewModel.class);
+
+        // Get a new Adapter
+        mAdapter = new ContactsListAdapter();
 
         // Add an observer on the LiveData returned by getContactsList()
         // The onChanged()) method fires when the observed data changes and the activity is in the
@@ -72,7 +79,7 @@ public class ContactsList extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable final List<Contact> contacts) {
                 // update the cached copy of the contacts in the adapter.
-                mAdapter = new ContactsListAdapter(contacts);
+                mAdapter.setContacts(contacts);
             }
         });
 
@@ -97,15 +104,70 @@ public class ContactsList extends AppCompatActivity {
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 //get item position
                 final int position = viewHolder.getAdapterPosition();
-                final List<Contact> contacts = mAdapter.getContacts();
+                Log.d("ContactsList", "AdapterPosition: " + position);
+                final List<ListItem> list = mAdapter.getmList();
+                final List<Contact> contactList = mAdapter.getContacts();
+                final ListItem item = list.get(position);
+                Log.d("ContactsList", "Item: " + item.toString());
+                long touchedId = list.get(position).getId(); // Need to actually get the id of the previous header
 
-                AppExecutor.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        mContactsListViewModel.delete(contacts.get(position));
+                ListItem currentHeader = new ListItem();
+                for (int i = 0; i <= position; i++) {
+                    ListItem tempItem = list.get(i);
+                        if (tempItem instanceof Header) {
+                            currentHeader = tempItem;
+                            Log.d("ListIteration", "Header ID: " + tempItem.getId());
+                        } else {
+                            Log.d("ListIteration", "ID: " + tempItem.getId());
+                        }
+                }
+
+                final long id = currentHeader.getId();
+
+                Log.d("ContactsList", "id: " + id);
+                if (item instanceof Header) {
+                    try {
+                        Contact contact = mContactsListViewModel.getContactById(id);
+                        mContactsListViewModel.delete(contact);
+                    } catch (InterruptedException ie) {
+                        ie.printStackTrace();
+                    } catch (ExecutionException ee) {
+                        ee.printStackTrace();
                     }
-                });
+                } else if (item instanceof ContentItem) {
+                    Log.d("ContactsList", "Content item found: " + item.getData());
+                    String data = item.getData();
+                    try {
+                        Contact contact = mContactsListViewModel.getContactById(id);
+                        List<String> phoneNumbers =  contact.getPhoneNumbers();
+                        ArrayList<String> numbers = new ArrayList<>();
+                        for (String number : phoneNumbers) {
+                            numbers.add(number);
+                        }
+                        List<String> emailAddresses = contact.getEmailAddresses();
+                        ArrayList<String> emails = new ArrayList<>();
+                        for (String email : emailAddresses) {
+                            emails.add(email);
+                        }
+                        try {
+                            numbers.remove(data);
+                            emails.remove(data);
+                        } catch (Exception e) {
+                            Log.e("ContactsList", "Error removing item: " + e);
+                            e.printStackTrace();
+                        }
+                        contact.setPhoneNumbers(numbers);
+                        contact.setEmailAddresses(emails);
 
+                        final Contact newContact = contact;
+                        mContactsListViewModel.insert(newContact);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+                mAdapter.notifyDataSetChanged();
             }
         }).attachToRecyclerView(mRecyclerView);
     }
@@ -232,6 +294,7 @@ public class ContactsList extends AppCompatActivity {
             }
             break;
         }
+        mAdapter.notifyDataSetChanged();
     }
 
 }

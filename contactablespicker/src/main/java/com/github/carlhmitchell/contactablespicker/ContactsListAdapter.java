@@ -21,13 +21,12 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<Contact> mContacts; // Cached copy of Contacts
     private List<ListItem> mList;
 
-    public ContactsListAdapter(List<Contact> contacts) {
-        setContacts(contacts);
+    public ContactsListAdapter() {
     }
 
     public void setContacts(List<Contact> contacts) {
         mContacts = contacts;
-        mList = getList();
+        getList();
         notifyDataSetChanged();
     }
 
@@ -35,11 +34,16 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return mContacts;
     }
 
-    public ArrayList<ListItem> getList() {
+    public List<ListItem> getmList() {
+        return mList;
+    }
+
+    private void getList() {
         ArrayList<ListItem> arrayList = new ArrayList<>();
         for (Contact contact: mContacts) {
             Header header = new Header();
             header.setContactName(contact.getContactName());
+            header.setId(contact.getId());
             arrayList.add(header);
             for (String phoneNumber : contact.getPhoneNumbers()) {
                 ContentItem item = new ContentItem();
@@ -52,7 +56,7 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 arrayList.add(item);
             }
         }
-        return arrayList;
+        mList = arrayList;
     }
 
     @Override
