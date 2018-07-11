@@ -50,14 +50,21 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             nameHeader.setId(contact.getId());
             tempList.add(nameHeader);
             for (String phoneNumber : contact.getPhoneNumbers()) {
-                ContentItem phoneNumberItem = new ContentItem();
-                phoneNumberItem.setData(phoneNumber);
-                tempList.add(phoneNumberItem);
+                if (!phoneNumber.equals("")) {
+                    ContentItem phoneNumberItem = new ContentItem();
+                    phoneNumberItem.setData(phoneNumber);
+                    tempList.add(phoneNumberItem);
+                }
             }
             for (String email : contact.getEmailAddresses()) {
-                ContentItem emailAddressItem = new ContentItem();
-                emailAddressItem.setData(email);
-                tempList.add(emailAddressItem);
+                if (!email.equals("")) {
+                    ContentItem emailAddressItem = new ContentItem();
+                    emailAddressItem.setData(email);
+                    tempList.add(emailAddressItem);
+                }
+            }
+            if (tempList.get(tempList.size() - 1) instanceof NameHeader) {
+                tempList.remove(tempList.size() - 1);
             }
         }
         mList = tempList;
