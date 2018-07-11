@@ -14,34 +14,46 @@ import com.github.carlhmitchell.contactablespicker.Storage.Contact;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * RecyclerView Adapter for the ContactsList.
+ */
 public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     //private static final String DEBUG_TAG = "ContactsListAdapter";
 
     private static final int TYPE_HEADER = 0;
-    private static final int TYPE_ITEM = 1;
+    private static final int TYPE_CONTENT = 1;
     private List<Contact> mContacts; // Cached copy of Contacts
-    private List<ListItem> mList;
+    private List<ListItem> mList;    // List of items to display in the RecyclerView
+
 
     public ContactsListAdapter() {
     }
 
+    /**
+     * Updates the displayed list of contact information.
+     * Also updates the cached copy of the Contacts list.
+     *
+     * @param contacts New list of Contacts to display.
+     */
     public void setContacts(List<Contact> contacts) {
         mContacts = contacts;
         populateList();
         notifyDataSetChanged();
     }
 
-    // Unused method. Could be useful for enhancements later.
-    /*
-    public List<Contact> getContacts() {
-        return mContacts;
-    }
-    */
-
+    /**
+     * Gets the list of visible contacts in the RecyclerView.
+     * @return This adapter's list of displayed contacts.
+     */
     public List<ListItem> getList() {
         return mList;
     }
 
+    /**
+     * Converts the List of Contacts into a list of displayed contacts.
+     *     Displayed contacts are ListItems, either NameHeaders (contact names) or ContentItems
+     *     (phone numbers and/or email addresses).
+     */
     private void populateList() {
         ArrayList<ListItem> tempList = new ArrayList<>();
         for (Contact contact : mContacts) {
@@ -96,19 +108,22 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
+    /**
+     * Determines the type of a ListItem at a given position in the list.
+     * @param position Position in a List of ListItems of the ListItem in question
+     * @return Constant representing the type (Header or Content) of the ListItem
+     */
     public int getItemViewType(int position) {
-        if (isPositionHeader(position)) {
+        if (mList.get(position) instanceof NameHeader) {
             return TYPE_HEADER;
         }
-        return TYPE_ITEM;
+        return TYPE_CONTENT;
     }
 
-    private boolean isPositionHeader(int position) {
-
-        return mList.get(position) instanceof NameHeader;
-
-    }
-
+    /**
+     * Gets the number of items in the list of displayed contacts.
+     * @return The size of the list of displayed contacts, or 0 if the list is null.
+     */
     @Override
     public int getItemCount() {
         if (mList != null) {
@@ -118,6 +133,9 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
+    /**
+     * ViewHolder for Header (Contact name) items.
+     */
     class VHHeader extends RecyclerView.ViewHolder {
         final TextView txtTitle;
 
@@ -127,6 +145,9 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
+    /**
+     * ViewHolder for content items (displayed phone numbers/email addresses).
+     */
     class VHItem extends RecyclerView.ViewHolder {
         final TextView txtData;
 
