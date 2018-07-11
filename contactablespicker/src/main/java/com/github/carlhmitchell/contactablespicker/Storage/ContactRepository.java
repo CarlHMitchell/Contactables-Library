@@ -12,7 +12,7 @@ public class ContactRepository {
     private static final String DEBUG_TAG = "ContactRepository";
 
     private final ContactDAO mContactDAO;
-    public static LiveData<List<Contact>> mAllContactsLD;
+    public static LiveData<List<Contact>> mAllContacts;
 
     /**
      * Initializes the database connection and gets a cached copy of the Contacts List as LiveData
@@ -22,7 +22,7 @@ public class ContactRepository {
     public ContactRepository(Context context) {
         ContactsDatabase db = ContactsDatabase.getDatabase(context.getApplicationContext());
         mContactDAO = db.contactDAO();
-        getAllContactsLD();
+        getAllContacts();
     }
 
     /**
@@ -37,9 +37,9 @@ public class ContactRepository {
         return new GetContactByIdAsyncTask(mContactDAO).execute(id).get();
     }
 
-    private void getAllContactsLD() {
+    private void getAllContacts() {
         try {
-            mAllContactsLD = new GetAllContactsLDAsyncTask(mContactDAO).execute().get();
+            mAllContacts = new GetAllContactsAsyncTask(mContactDAO).execute().get();
         } catch (InterruptedException e) {
             Log.e(DEBUG_TAG, "Error, got Interrupted Exception:\n" + e);
         } catch (ExecutionException e) {
@@ -68,10 +68,10 @@ public class ContactRepository {
     /**
      * AsyncTask to get the Contacts List as LiveData
      */
-    private static class GetAllContactsLDAsyncTask extends AsyncTask<Void, Void, LiveData<List<Contact>>> {
+    private static class GetAllContactsAsyncTask extends AsyncTask<Void, Void, LiveData<List<Contact>>> {
         private final ContactDAO mAsyncTaskDao;
 
-        GetAllContactsLDAsyncTask(ContactDAO dao) {
+        GetAllContactsAsyncTask(ContactDAO dao) {
             mAsyncTaskDao = dao;
         }
 

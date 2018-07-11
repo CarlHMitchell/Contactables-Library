@@ -38,7 +38,7 @@ public class ContactsListViewModel extends AndroidViewModel {
 
         repository = new ContactRepository(application);
         Log.i(DEBUG_TAG, "Retrieving data from database");
-        contactsList = ContactRepository.mAllContactsLD;
+        contactsList = ContactRepository.mAllContacts;
     }
 
     /**
