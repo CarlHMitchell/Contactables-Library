@@ -23,11 +23,12 @@ import com.github.carlhmitchell.contactablespicker.Storage.Contact;
 import com.github.carlhmitchell.contactablespicker.listViewHelpers.ContactsListAdapter;
 import com.github.carlhmitchell.contactablespicker.listViewHelpers.ContactsListViewModel;
 import com.github.carlhmitchell.contactablespicker.listViewHelpers.ContentItem;
-import com.github.carlhmitchell.contactablespicker.listViewHelpers.Header;
 import com.github.carlhmitchell.contactablespicker.listViewHelpers.ListItem;
+import com.github.carlhmitchell.contactablespicker.listViewHelpers.NameHeader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import static android.provider.ContactsContract.CommonDataKinds.Email;
@@ -36,6 +37,7 @@ import static android.provider.ContactsContract.CommonDataKinds.Phone;
 import static com.github.carlhmitchell.contactablespicker.utils.AppConstants.CONTACT_PICKER_RESULT;
 
 public class ContactsList extends AppCompatActivity {
+    private static final String DEBUG_TAG = "ContactsList";
 
     private ContactsListAdapter mAdapter;
     private ContactsListViewModel mContactsListViewModel;
@@ -104,17 +106,17 @@ public class ContactsList extends AppCompatActivity {
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 //get item position
                 final int position = viewHolder.getAdapterPosition();
-                Log.d("ContactsList", "AdapterPosition: " + position);
-                final List<ListItem> list = mAdapter.getmList();
+                Log.d(DEBUG_TAG, "AdapterPosition: " + position);
+                final List<ListItem> list = mAdapter.getList();
                 final ListItem item = list.get(position);
-                Log.d("ContactsList", "Item: " + item.toString());
+                Log.d(DEBUG_TAG, "Item: " + item.toString());
 
                 ListItem currentHeader = new ListItem();
                 for (int i = 0; i <= position; i++) {
                     ListItem tempItem = list.get(i);
-                    if (tempItem instanceof Header) {
+                    if (tempItem instanceof NameHeader) {
                         currentHeader = tempItem;
-                        Log.d("ListIteration", "Header ID: " + tempItem.getId());
+                        Log.d("ListIteration", "NameHeader ID: " + tempItem.getId());
                     } else {
                         Log.d("ListIteration", "ID: " + tempItem.getId());
                     }
@@ -122,8 +124,8 @@ public class ContactsList extends AppCompatActivity {
 
                 final long id = currentHeader.getId();
 
-                Log.d("ContactsList", "id: " + id);
-                if (item instanceof Header) {
+                Log.d(DEBUG_TAG, "id: " + id);
+                if (item instanceof NameHeader) {
                     try {
                         Contact contact = mContactsListViewModel.getContactById(id);
                         mContactsListViewModel.delete(contact);
@@ -131,7 +133,7 @@ public class ContactsList extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 } else if (item instanceof ContentItem) {
-                    Log.d("ContactsList", "Content item found: " + item.getData());
+                    Log.d(DEBUG_TAG, "Content item found: " + item.getData());
                     String data = item.getData();
                     try {
                         Contact contact = mContactsListViewModel.getContactById(id);
@@ -143,7 +145,7 @@ public class ContactsList extends AppCompatActivity {
                             numbers.remove(data);
                             emails.remove(data);
                         } catch (Exception e) {
-                            Log.e("ContactsList", "Error removing item: " + e);
+                            Log.e(DEBUG_TAG, "Error removing item: " + e);
                             e.printStackTrace();
                         }
                         contact.setPhoneNumbers(numbers);
@@ -189,85 +191,101 @@ public class ContactsList extends AppCompatActivity {
         ArrayList<String> numbers = new ArrayList<>();
         String email;
         ArrayList<String> emailAddresses = new ArrayList<>();
-        //TODO: Move this into its own class.
         switch (resultCode) {
             case RESULT_OK: {
-                //TODO: shrink this into small try/catch blocks instead of one big one.
                 try {
                     Uri uri = data.getData();
                     ContentResolver cr = getContentResolver();
-                    Cursor cursor = cr.query(uri, null, null, null, null);
-                    if (cursor.moveToFirst()) {
+                    Cursor cursor = cr.query(Objects.requireNonNull(uri, "Error, null URI from contact picker"),
+                                             null, null, null, null);
+                    if (Objects.requireNonNull(cursor, "Contact URI cursor null!").moveToFirst()) {
                         int nameIndex = cursor.getColumnIndex(Identity.DISPLAY_NAME);
                         contactName = cursor.getString(nameIndex);
                         // Example: Show the name.
                         Toast.makeText(this, "Name: " + contactName, Toast.LENGTH_SHORT).show();
-                        Log.i("ContactsList", "User selected contact " + contactName);
+                        Log.i(DEBUG_TAG, "User selected contact " + contactName);
                         contactID =
                                 cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-                        Log.i("ContactsList", "Contact ID: " + contactID);
+                        Log.i(DEBUG_TAG, "Contact ID: " + contactID);
 
                         // Get all phone numbers
-                        Cursor phones = cr.query(Phone.CONTENT_URI, null,
-                                                 Phone.CONTACT_ID + " = " + contactID,
-                                                 null, null);
-                        while (phones.moveToNext()) {
-                            number = phones.getString(phones.getColumnIndex(Phone.NUMBER));
-                            //Log.i("ContactsList", "Got phone number " + number);
+                        try {
+                            Cursor phones = cr.query(Phone.CONTENT_URI, null,
+                                                     Phone.CONTACT_ID + " = " + contactID,
+                                                     null, null);
+                            while (Objects.requireNonNull(phones, "Phones cursor null!").moveToNext()) {
+                                number = phones.getString(phones.getColumnIndex(Phone.NUMBER));
+                                Log.i(DEBUG_TAG, "Got phone number " + number);
 
-                            // Could put this under Mobile number only. Leaving for all just in case.
-                            numbers.add(number);
+                                // This might be better if it only used mobile numbers, but users might
+                                //    not categorize their contact's numbers fully.
+                                numbers.add(number);
 
+                            /*
                             int type = phones.getInt(phones.getColumnIndex(Phone.TYPE));
                             switch (type) {
                                 case Phone.TYPE_HOME:
-                                    Log.i("ContactsList", "Got Home number " + number);
+                                    Log.i(DEBUG_TAG, "Got Home number " + number);
                                     break;
                                 case Phone.TYPE_MOBILE:
-                                    Log.i("ContactsList", "Got Mobile number " + number);
+                                    Log.i(DEBUG_TAG, "Got Mobile number " + number);
                                     break;
                                 case Phone.TYPE_WORK:
-                                    Log.i("ContactsList", "Got Work number " + number);
+                                    Log.i(DEBUG_TAG, "Got Work number " + number);
                                     break;
                                 default:
-                                    Log.i("ContactsList", "Got other type of number " + number);
+                                    Log.i(DEBUG_TAG, "Got other type of number " + number);
                                     break;
                             }
+                            */
+                            }
+                            phones.close();
+                        } catch (Exception e) {
+                            Log.e(DEBUG_TAG, "Failed to get phone numbers.");
+                            e.printStackTrace();
                         }
-                        phones.close();
+
 
                         // Get all email addresses
-                        Cursor emails = cr.query(Email.CONTENT_URI, null,
-                                                 Email.CONTACT_ID + " = " + contactID,
-                                                 null, null);
-                        while (emails.moveToNext()) {
-                            email = emails.getString(emails.getColumnIndex(Email.ADDRESS));
+                        try {
+                            Cursor emails = cr.query(Email.CONTENT_URI, null,
+                                                     Email.CONTACT_ID + " = " + contactID,
+                                                     null, null);
+                            while (Objects.requireNonNull(emails, "Emails cursor null!").moveToNext()) {
+                                email = emails.getString(emails.getColumnIndex(Email.ADDRESS));
+                                Log.i(DEBUG_TAG, "Got email address: " + email);
+                                // Like with phone numbers, for some uses someone might want to be able
+                                //    to filter by type.
+                                emailAddresses.add(email);
+
+                            /*
                             int type = emails.getInt(emails.getColumnIndex(Email.TYPE));
-
-                            emailAddresses.add(email);
-
                             switch (type) {
                                 case Email.TYPE_HOME:
-                                    Log.i("ContactsList", "Got Home email " + email);
+                                    Log.i(DEBUG_TAG, "Got Home email " + email);
                                     break;
                                 case Email.TYPE_WORK:
-                                    Log.i("ContactsList", "Got Work email " + email);
+                                    Log.i(DEBUG_TAG, "Got Work email " + email);
                                     break;
                                 default:
-                                    Log.i("ContactsList", "Got other type of email " + email);
+                                    Log.i(DEBUG_TAG, "Got other type of email " + email);
                                     break;
                             }
+                            */
+                            }
+                            emails.close();
+                        } catch (Exception e) {
+                            Log.e(DEBUG_TAG, "Failed to get email addresses");
+                            e.printStackTrace();
                         }
-                        emails.close();
-
                     }
                     cursor.close();
-
 
                     Contact contact = new Contact(Integer.parseInt(contactID), contactName, numbers, emailAddresses);
                     mContactsListViewModel.insert(contact);
                 } catch (Exception e) {
-                    Log.e("ContactsList", "Failed to get contact name: \n" + e);
+                    Log.e(DEBUG_TAG, "Failed to get contact name: \n" + e);
+                    e.printStackTrace();
                 }
             }
             break;
@@ -277,7 +295,7 @@ public class ContactsList extends AppCompatActivity {
             break;
             default: {
                 Toast.makeText(this, "Invalid result code.", Toast.LENGTH_SHORT).show();
-                Log.e("ContactsList", "Invalid result code.");
+                Log.e(DEBUG_TAG, "Invalid result code.");
             }
             break;
         }

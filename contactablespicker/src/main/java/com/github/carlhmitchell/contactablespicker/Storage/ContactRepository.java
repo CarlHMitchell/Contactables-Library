@@ -53,9 +53,12 @@ public class ContactRepository {
         }
     }
 
+    // Unused method. Possibly needed for future enhancements.
+    /*
     public int getCount() {
         return mContactDAO.getCount();
     }
+    */
 
     public Contact getById(long id) throws InterruptedException, ExecutionException {
         return new GetContactByIdAsyncTask(mContactDAO).execute(id).get();

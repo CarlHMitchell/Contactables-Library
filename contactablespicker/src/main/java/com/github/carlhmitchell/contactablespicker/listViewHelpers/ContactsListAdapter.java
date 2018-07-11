@@ -10,14 +10,13 @@ import android.widget.TextView;
 
 import com.github.carlhmitchell.contactablespicker.R;
 import com.github.carlhmitchell.contactablespicker.Storage.Contact;
-import com.github.carlhmitchell.contactablespicker.listViewHelpers.ContentItem;
-import com.github.carlhmitchell.contactablespicker.listViewHelpers.Header;
-import com.github.carlhmitchell.contactablespicker.listViewHelpers.ListItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    //private static final String DEBUG_TAG = "ContactsListAdapter";
+
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
     private List<Contact> mContacts; // Cached copy of Contacts
@@ -28,38 +27,40 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public void setContacts(List<Contact> contacts) {
         mContacts = contacts;
-        getList();
+        populateList();
         notifyDataSetChanged();
     }
 
+    // Unused method. Could be useful for enhancements later.
+    /*
     public List<Contact> getContacts() {
         return mContacts;
     }
+    */
 
-    @SuppressWarnings("SpellCheckingInspection")
-    public List<ListItem> getmList() {
+    public List<ListItem> getList() {
         return mList;
     }
 
-    private void getList() {
-        ArrayList<ListItem> arrayList = new ArrayList<>();
+    private void populateList() {
+        ArrayList<ListItem> tempList = new ArrayList<>();
         for (Contact contact : mContacts) {
-            Header header = new Header();
-            header.setContactName(contact.getContactName());
-            header.setId(contact.getId());
-            arrayList.add(header);
+            NameHeader nameHeader = new NameHeader();
+            nameHeader.setContactName(contact.getContactName());
+            nameHeader.setId(contact.getId());
+            tempList.add(nameHeader);
             for (String phoneNumber : contact.getPhoneNumbers()) {
-                ContentItem item = new ContentItem();
-                item.setData(phoneNumber);
-                arrayList.add(item);
+                ContentItem phoneNumberItem = new ContentItem();
+                phoneNumberItem.setData(phoneNumber);
+                tempList.add(phoneNumberItem);
             }
             for (String email : contact.getEmailAddresses()) {
-                ContentItem item = new ContentItem();
-                item.setData(email);
-                arrayList.add(item);
+                ContentItem emailAddressItem = new ContentItem();
+                emailAddressItem.setData(email);
+                tempList.add(emailAddressItem);
             }
         }
-        mList = arrayList;
+        mList = tempList;
     }
 
     @NonNull
@@ -78,7 +79,7 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
         if (holder instanceof VHHeader) {
-            Header currentItem = (Header) mList.get(position);
+            NameHeader currentItem = (NameHeader) mList.get(position);
             VHHeader VHheader = (VHHeader) holder;
             VHheader.txtTitle.setText(currentItem.getContactName());
         } else if (holder instanceof VHItem) {
@@ -97,7 +98,7 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private boolean isPositionHeader(int position) {
 
-        return mList.get(position) instanceof Header;
+        return mList.get(position) instanceof NameHeader;
 
     }
 

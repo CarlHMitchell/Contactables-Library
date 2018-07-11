@@ -1,6 +1,8 @@
 package com.github.carlhmitchell.contactablespicker.listViewHelpers;
 
 public class ListItem {
+    //private static final String DEBUG_TAG = "ListItem";
+
     private String data;
     private long id;
 
@@ -11,6 +13,7 @@ public class ListItem {
         return data;
     }
 
+    @SuppressWarnings("unused")
     public void setData(String data) {
         this.data = data;
     }

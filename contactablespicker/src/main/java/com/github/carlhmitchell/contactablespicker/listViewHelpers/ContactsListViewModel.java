@@ -17,6 +17,7 @@ import java.util.concurrent.ExecutionException;
  * ViewModel to keep a reference to the Contact repository and an up-to-date list of all Contacts.
  */
 public class ContactsListViewModel extends AndroidViewModel {
+    private static final String DEBUG_TAG = "ContactsListViewModel";
 
     private final ContactRepository repository;
     /*
@@ -31,7 +32,7 @@ public class ContactsListViewModel extends AndroidViewModel {
         super(application);
 
         repository = new ContactRepository(application);
-        Log.i("ContactsList View Model", "Retrieving data from database");
+        Log.i(DEBUG_TAG, "Retrieving data from database");
         contactsList = ContactRepository.mAllContactsLD;
     }
 
@@ -39,7 +40,7 @@ public class ContactsListViewModel extends AndroidViewModel {
         return contactsList;
     }
 
-    public Contact getContactById(long id) throws InterruptedException, ExecutionException{
+    public Contact getContactById(long id) throws InterruptedException, ExecutionException {
         return repository.getById(id);
     }
 

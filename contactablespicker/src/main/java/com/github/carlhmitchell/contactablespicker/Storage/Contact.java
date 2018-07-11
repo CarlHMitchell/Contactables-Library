@@ -10,6 +10,7 @@ import java.util.List;
 
 @Entity(tableName = "contacts_table")
 public class Contact {
+    //private static final String DEBUG_TAG = "Contact";
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
@@ -17,7 +18,7 @@ public class Contact {
 
     @NonNull
     @ColumnInfo(name = "contact_name")
-    private String contactName;
+    private final String contactName;
 
     @ColumnInfo(name = "phone_numbers")
     private List<String> phoneNumbers;
@@ -33,8 +34,7 @@ public class Contact {
         this.emailAddresses = emailAddresses;
     }
 
-    public Contact(@NonNull String contactName, List<String> phoneNumbers, List<String> emailAddresses) {
-        //newId();
+    Contact(@NonNull String contactName, List<String> phoneNumbers, List<String> emailAddresses) {
         this.contactName = contactName;
         this.phoneNumbers = phoneNumbers;
         this.emailAddresses = emailAddresses;
@@ -53,9 +53,12 @@ public class Contact {
         return contactName;
     }
 
+    // Unused method. Possibly needed for future enhancements.
+    /*
     public void setContactName(@NonNull String contactName) {
         this.contactName = contactName;
     }
+    */
 
     public List<String> getPhoneNumbers() {
         return phoneNumbers;
@@ -86,14 +89,10 @@ public class Contact {
         }
     }
 
+    // Unused method. Possibly needed for future enhancements.
+    /*
     public Contact getContact() {
         return this;
     }
-
-    /*
-    public void newId() {
-        //this.id = java.util.UUID.randomUUID();
-    }
     */
-
 }

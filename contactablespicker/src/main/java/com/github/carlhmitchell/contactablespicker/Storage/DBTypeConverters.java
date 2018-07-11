@@ -1,10 +1,13 @@
 package com.github.carlhmitchell.contactablespicker.Storage;
 
 import android.arch.persistence.room.TypeConverter;
+
 import java.util.Arrays;
 import java.util.List;
 
 class DBTypeConverters {
+    //private static final String DEBUG_TAG = "DBTypeConverters";
+
     @TypeConverter
     public static String listToString(List<String> value) {
         return value.toString();
