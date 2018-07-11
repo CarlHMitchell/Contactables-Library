@@ -1,6 +1,9 @@
 <resources>
 
     <!-- Base application theme. -->
+    <!-- For whatever reason AndroidStudio likes to think that Theme is invalid, yet still builds
+            the project just fine. Suppressing the inspection is a workaround. -->
+    <!--suppress AndroidDomInspection -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
