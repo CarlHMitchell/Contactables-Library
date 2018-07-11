@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">ContactablesPicker</string>
     <string name="title_activity_contacts_list">ContactsList</string>
+    <string name="permission_denied_error">Error, permission denied.</string>
 </resources>

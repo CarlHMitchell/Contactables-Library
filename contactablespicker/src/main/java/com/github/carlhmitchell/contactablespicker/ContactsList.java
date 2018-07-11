@@ -1,13 +1,19 @@
 package com.github.carlhmitchell.contactablespicker;
 
+import android.Manifest;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,7 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import static android.support.design.widget.Snackbar.LENGTH_LONG;
 import static com.github.carlhmitchell.contactablespicker.utils.AppConstants.CONTACT_PICKER_RESULT;
+import static com.github.carlhmitchell.contactablespicker.utils.AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS;
 
 public class ContactsList extends AppCompatActivity {
     private static final String DEBUG_TAG = "ContactsList";
@@ -171,8 +179,38 @@ public class ContactsList extends AppCompatActivity {
      * Start the Android contact picker to get the URI of the user selected contact.
      */
     private void doLaunchContactPicker() {
-        Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-        startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+            Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+            startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
+        } else {
+            // Permission is not granted
+            ActivityCompat.requestPermissions(this,
+                                              new String[]{Manifest.permission.READ_CONTACTS},
+                                              MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+
+            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    doLaunchContactPicker();
+                } else {
+                    //Permission denied.
+                    Snackbar.make(findViewById(R.id.contacts_list_coordinator_layout),
+                                  R.string.permission_denied_error,
+                                  LENGTH_LONG).show();
+                }
+            }
+        }
     }
 
     /**
