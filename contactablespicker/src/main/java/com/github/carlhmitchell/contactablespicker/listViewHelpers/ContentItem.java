@@ -1,5 +1,9 @@
 package com.github.carlhmitchell.contactablespicker.listViewHelpers;
 
+/**
+ * ContentItems contain non-header data for the displayed list of contacts.
+ * This can be a phone number or an email address.
+ */
 public class ContentItem extends ListItem {
     //private static final String DEBUG_TAG = "ContentItem";
 

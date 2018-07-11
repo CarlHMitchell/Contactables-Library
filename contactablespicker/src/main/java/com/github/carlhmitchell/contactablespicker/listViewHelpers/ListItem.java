@@ -1,5 +1,10 @@
 package com.github.carlhmitchell.contactablespicker.listViewHelpers;
 
+/**
+ * Superclass for the Header (contact name) and ContentItem (contact phone number/email address)
+ * display classes.
+ * Each ListItem has an ID which should be set to the same value as the Contact ID it is displaying.
+ */
 public class ListItem {
     //private static final String DEBUG_TAG = "ListItem";
 

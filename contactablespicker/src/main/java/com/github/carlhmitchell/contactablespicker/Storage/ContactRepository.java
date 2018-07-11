@@ -14,14 +14,60 @@ public class ContactRepository {
     private final ContactDAO mContactDAO;
     public static LiveData<List<Contact>> mAllContactsLD;
 
+    /**
+     * Initializes the database connection and gets a cached copy of the Contacts List as LiveData
+     *
+     * @param context Context from which to get the Application Context to open the database with.
+     */
     public ContactRepository(Context context) {
         ContactsDatabase db = ContactsDatabase.getDatabase(context.getApplicationContext());
         mContactDAO = db.contactDAO();
         getAllContactsLD();
     }
 
+    /**
+     * Gets a Contact from the local database by its ID.
+     *
+     * @param id ID of the Contact to retrieve.
+     * @return Contact found from the database.
+     * @throws InterruptedException The retrieval occurs asynchronously. If it's interrupted this is thrown.
+     * @throws ExecutionException   The retrieval occurs asynchronously. If its thread crashes this is thrown.
+     */
+    public Contact getById(long id) throws InterruptedException, ExecutionException {
+        return new GetContactByIdAsyncTask(mContactDAO).execute(id).get();
+    }
 
+    private void getAllContactsLD() {
+        try {
+            mAllContactsLD = new GetAllContactsLDAsyncTask(mContactDAO).execute().get();
+        } catch (InterruptedException e) {
+            Log.e(DEBUG_TAG, "Error, got Interrupted Exception:\n" + e);
+        } catch (ExecutionException e) {
+            Log.e(DEBUG_TAG, "Error, got Execution exception:\n" + e);
+        }
+    }
 
+    /**
+     * Add a Contact to the database, or replace an existing Contact with the same ID.
+     *
+     * @param contact Contact to add or replace.
+     */
+    public void insert(Contact contact) {
+        new insertAsyncTask(mContactDAO).execute(contact);
+    }
+
+    /**
+     * Remove a Contact from the database.
+     *
+     * @param contact Contact to remove.
+     */
+    public void delete(Contact contact) {
+        new deleteAsyncTask(mContactDAO).execute(contact);
+    }
+
+    /**
+     * AsyncTask to get the Contacts List as LiveData
+     */
     private static class GetAllContactsLDAsyncTask extends AsyncTask<Void, Void, LiveData<List<Contact>>> {
         private final ContactDAO mAsyncTaskDao;
 
@@ -41,29 +87,9 @@ public class ContactRepository {
         }
     }
 
-
-
-    private void getAllContactsLD() {
-        try {
-            mAllContactsLD = new GetAllContactsLDAsyncTask(mContactDAO).execute().get();
-        } catch (InterruptedException e) {
-            Log.e(DEBUG_TAG, "Error, got Interrupted Exception:\n" + e);
-        } catch (ExecutionException e) {
-            Log.e(DEBUG_TAG, "Error, got Execution exception:\n" + e);
-        }
-    }
-
-    // Unused method. Possibly needed for future enhancements.
-    /*
-    public int getCount() {
-        return mContactDAO.getCount();
-    }
-    */
-
-    public Contact getById(long id) throws InterruptedException, ExecutionException {
-        return new GetContactByIdAsyncTask(mContactDAO).execute(id).get();
-    }
-
+    /**
+     * AsyncTask to get a Contact by its ID.
+     */
     private static class GetContactByIdAsyncTask extends AsyncTask<Long, Void, Contact> {
         private final ContactDAO mAsyncTaskDao;
 
@@ -82,14 +108,9 @@ public class ContactRepository {
         }
     }
 
-    public void insert(Contact contact) {
-        new insertAsyncTask(mContactDAO).execute(contact);
-    }
-
-    public void delete(Contact contact) {
-        new deleteAsyncTask(mContactDAO).execute(contact);
-    }
-
+    /**
+     * AsyncTask to add or replace Contacts in the database.
+     */
     private static class insertAsyncTask extends AsyncTask<Contact, Void, Void> {
         private final ContactDAO mAsyncTaskDao;
 
@@ -105,6 +126,9 @@ public class ContactRepository {
         }
     }
 
+    /**
+     * AsyncTask to remove Contacts from the database.
+     */
     private static class deleteAsyncTask extends AsyncTask<Contact, Void, Void> {
         private final ContactDAO mAsyncTaskDao;
 

@@ -7,6 +7,9 @@ import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.util.Log;
 
+/**
+ * Class to create a connection to the Room database, or create the database if none exists yet.
+ */
 @Database(entities = {Contact.class}, version = 2, exportSchema = false)
 @TypeConverters({DBTypeConverters.class})
 public abstract class ContactsDatabase extends RoomDatabase {

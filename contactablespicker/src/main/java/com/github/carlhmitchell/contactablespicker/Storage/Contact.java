@@ -8,6 +8,12 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
+/**
+ * Contacts are represented in the local database as a name, a list of phone numbers, and a list of
+ * email addresses.
+ * This class allows manipulation of Contacts and their storage in the database using
+ * Room annotations.
+ */
 @Entity(tableName = "contacts_table")
 public class Contact {
     //private static final String DEBUG_TAG = "Contact";
@@ -27,7 +33,7 @@ public class Contact {
     private List<String> emailAddresses;
 
     @Ignore
-    public Contact(int id, @NonNull String contactName, List<String> phoneNumbers, List<String> emailAddresses) {
+    public Contact(long id, @NonNull String contactName, List<String> phoneNumbers, List<String> emailAddresses) {
         this.id = id;
         this.contactName = contactName;
         this.phoneNumbers = phoneNumbers;
@@ -76,6 +82,10 @@ public class Contact {
         this.emailAddresses = emailAddresses;
     }
 
+    /**
+     * Converts a Contact to a parseable String. Used for logging and testing.
+     * @return String representation of the Contact.
+     */
     public String toString() {
         //Ensure there's data in both phoneNumbers and emailAddresses. If not, set to empty lists.
         if ((phoneNumbers != null) && (emailAddresses != null)) {

@@ -47,9 +47,11 @@ public class ContactsList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts_list);
 
+        // Setup the Toolbar to show the application name.
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // The Floating Action Button launches the Android contact picker.
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,10 +70,10 @@ public class ContactsList extends AppCompatActivity {
         final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // Get a new or existing ViewModel from the ViewModelProvider
+        // Get a new or existing ViewModel from the ViewModelProvider.
         mContactsListViewModel = ViewModelProviders.of(this).get(ContactsListViewModel.class);
 
-        // Get a new Adapter
+        // Get a new Adapter.
         mAdapter = new ContactsListAdapter();
 
         // Add an observer on the LiveData returned by getContactsList()
@@ -85,12 +87,12 @@ public class ContactsList extends AppCompatActivity {
             }
         });
 
-        // specify an adapter
+        // Specify which Adapter the RecyclerView should use.
         mRecyclerView.setAdapter(mAdapter);
 
 
-        // make mRecyclerView swipe to the left and right.
-        // implement delete on swipe.
+        // Make mRecyclerView swipe to the left and right.
+        // Implement delete on swipe.
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
             // MUST implement onMove & onSwiped, as ItemTouchHelper.SimpleCallback is abstract.
@@ -111,6 +113,10 @@ public class ContactsList extends AppCompatActivity {
                 final ListItem item = list.get(position);
                 Log.d(DEBUG_TAG, "Item: " + item.toString());
 
+                /* The database stores Contacts, not ListItems. If the user swipes on a phone number
+                 *    or email address the contact ID is in that item's header. This finds the
+                 *    appropriate header.
+                 */
                 ListItem currentHeader = new ListItem();
                 for (int i = 0; i <= position; i++) {
                     ListItem tempItem = list.get(i);
@@ -124,6 +130,11 @@ public class ContactsList extends AppCompatActivity {
 
                 final long id = currentHeader.getId();
 
+                /*
+                 * If the swiped item is a Header (contact name), delete the entire Contact.
+                 * If the swiped item is a ContentItem (phone number or email address)
+                 *     delete only that item and update the Contact in the database.
+                 */
                 Log.d(DEBUG_TAG, "id: " + id);
                 if (item instanceof NameHeader) {
                     try {
@@ -161,28 +172,23 @@ public class ContactsList extends AppCompatActivity {
         }).attachToRecyclerView(mRecyclerView);
     }
 
+    /**
+     * Start the Android contact picker to get the URI of the user selected contact.
+     */
     private void doLaunchContactPicker() {
         Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
         startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // Is this needed?
-
-        // Add an observer on the LiveData returned by getContactsList()
-        // The onChanged()) method fires when the observed data changes and the activity is in the
-        // foreground
-        mContactsListViewModel.getContactsList().observe(this, new Observer<List<Contact>>() {
-            @Override
-            public void onChanged(@Nullable final List<Contact> contacts) {
-                // update the cached copy of the contacts in the adapter.
-                mAdapter.setContacts(contacts);
-            }
-        });
-    }
-
+    /**
+     * Get the URI of the Contact the user selected, and parse that Contact to store it in the
+     * Database.
+     *
+     * @param requestCode Request code sent to the Contact Picker.
+     * @param resultCode  Result code from the Contact Picker. If this is anything other than
+     *                    RESULT_OK there won't be a URI to parse.
+     * @param data        URI of the contact the user selected.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         String contactID = "";
@@ -217,27 +223,7 @@ public class ContactsList extends AppCompatActivity {
                                 number = phones.getString(phones.getColumnIndex(Phone.NUMBER));
                                 Log.i(DEBUG_TAG, "Got phone number " + number);
 
-                                // This might be better if it only used mobile numbers, but users might
-                                //    not categorize their contact's numbers fully.
                                 numbers.add(number);
-
-                            /*
-                            int type = phones.getInt(phones.getColumnIndex(Phone.TYPE));
-                            switch (type) {
-                                case Phone.TYPE_HOME:
-                                    Log.i(DEBUG_TAG, "Got Home number " + number);
-                                    break;
-                                case Phone.TYPE_MOBILE:
-                                    Log.i(DEBUG_TAG, "Got Mobile number " + number);
-                                    break;
-                                case Phone.TYPE_WORK:
-                                    Log.i(DEBUG_TAG, "Got Work number " + number);
-                                    break;
-                                default:
-                                    Log.i(DEBUG_TAG, "Got other type of number " + number);
-                                    break;
-                            }
-                            */
                             }
                             phones.close();
                         } catch (Exception e) {
@@ -257,21 +243,6 @@ public class ContactsList extends AppCompatActivity {
                                 // Like with phone numbers, for some uses someone might want to be able
                                 //    to filter by type.
                                 emailAddresses.add(email);
-
-                            /*
-                            int type = emails.getInt(emails.getColumnIndex(Email.TYPE));
-                            switch (type) {
-                                case Email.TYPE_HOME:
-                                    Log.i(DEBUG_TAG, "Got Home email " + email);
-                                    break;
-                                case Email.TYPE_WORK:
-                                    Log.i(DEBUG_TAG, "Got Work email " + email);
-                                    break;
-                                default:
-                                    Log.i(DEBUG_TAG, "Got other type of email " + email);
-                                    break;
-                            }
-                            */
                             }
                             emails.close();
                         } catch (Exception e) {
