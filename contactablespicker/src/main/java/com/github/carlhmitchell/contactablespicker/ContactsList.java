@@ -2,9 +2,7 @@ package com.github.carlhmitchell.contactablespicker;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -25,15 +23,12 @@ import com.github.carlhmitchell.contactablespicker.listViewHelpers.ContactsListV
 import com.github.carlhmitchell.contactablespicker.listViewHelpers.ContentItem;
 import com.github.carlhmitchell.contactablespicker.listViewHelpers.ListItem;
 import com.github.carlhmitchell.contactablespicker.listViewHelpers.NameHeader;
+import com.github.carlhmitchell.contactablespicker.utils.ContactPickerResultParser;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
-import static android.provider.ContactsContract.CommonDataKinds.Email;
-import static android.provider.ContactsContract.CommonDataKinds.Identity;
-import static android.provider.ContactsContract.CommonDataKinds.Phone;
 import static com.github.carlhmitchell.contactablespicker.utils.AppConstants.CONTACT_PICKER_RESULT;
 
 public class ContactsList extends AppCompatActivity {
@@ -191,69 +186,12 @@ public class ContactsList extends AppCompatActivity {
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        String contactID = "";
-        String contactName = "";
-        String number;
-        ArrayList<String> numbers = new ArrayList<>();
-        String email;
-        ArrayList<String> emailAddresses = new ArrayList<>();
         switch (resultCode) {
             case RESULT_OK: {
                 try {
                     Uri uri = data.getData();
-                    ContentResolver cr = getContentResolver();
-                    Cursor cursor = cr.query(Objects.requireNonNull(uri, "Error, null URI from contact picker"),
-                                             null, null, null, null);
-                    if (Objects.requireNonNull(cursor, "Contact URI cursor null!").moveToFirst()) {
-                        int nameIndex = cursor.getColumnIndex(Identity.DISPLAY_NAME);
-                        contactName = cursor.getString(nameIndex);
-                        // Example: Show the name.
-                        Toast.makeText(this, "Name: " + contactName, Toast.LENGTH_SHORT).show();
-                        Log.i(DEBUG_TAG, "User selected contact " + contactName);
-                        contactID =
-                                cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-                        Log.i(DEBUG_TAG, "Contact ID: " + contactID);
-
-                        // Get all phone numbers
-                        try {
-                            Cursor phones = cr.query(Phone.CONTENT_URI, null,
-                                                     Phone.CONTACT_ID + " = " + contactID,
-                                                     null, null);
-                            while (Objects.requireNonNull(phones, "Phones cursor null!").moveToNext()) {
-                                number = phones.getString(phones.getColumnIndex(Phone.NUMBER));
-                                Log.i(DEBUG_TAG, "Got phone number " + number);
-
-                                numbers.add(number);
-                            }
-                            phones.close();
-                        } catch (Exception e) {
-                            Log.e(DEBUG_TAG, "Failed to get phone numbers.");
-                            e.printStackTrace();
-                        }
-
-
-                        // Get all email addresses
-                        try {
-                            Cursor emails = cr.query(Email.CONTENT_URI, null,
-                                                     Email.CONTACT_ID + " = " + contactID,
-                                                     null, null);
-                            while (Objects.requireNonNull(emails, "Emails cursor null!").moveToNext()) {
-                                email = emails.getString(emails.getColumnIndex(Email.ADDRESS));
-                                Log.i(DEBUG_TAG, "Got email address: " + email);
-                                // Like with phone numbers, for some uses someone might want to be able
-                                //    to filter by type.
-                                emailAddresses.add(email);
-                            }
-                            emails.close();
-                        } catch (Exception e) {
-                            Log.e(DEBUG_TAG, "Failed to get email addresses");
-                            e.printStackTrace();
-                        }
-                    }
-                    cursor.close();
-
-                    Contact contact = new Contact(Integer.parseInt(contactID), contactName, numbers, emailAddresses);
-                    mContactsListViewModel.insert(contact);
+                    ContactPickerResultParser parser = new ContactPickerResultParser();
+                    mContactsListViewModel.insert(parser.parseContactUri(uri, this));
                 } catch (Exception e) {
                     Log.e(DEBUG_TAG, "Failed to get contact name: \n" + e);
                     e.printStackTrace();
