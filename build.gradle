@@ -21,6 +21,16 @@ allprojects {
         jcenter()
     }
 }
+ext {
+    // eg
+    // implementation "com.android.support:appcompat-v7:$rootProject.ext.supportLibVersion}"
+    supportLibVersion = "27.1.1"
+
+    compileSdkVersion = 27
+    targetSdkVersion = 27
+
+
+}
 
 task clean(type: Delete) {
     delete rootProject.buildDir
