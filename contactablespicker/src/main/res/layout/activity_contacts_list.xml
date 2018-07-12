@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/contacts_list_coordinator_layout"
+    android:id="@+id/contactablespicker_contacts_list_coordinator_layout"
     tools:context=".ContactsList">
 
     <android.support.design.widget.AppBarLayout
@@ -13,10 +13,10 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/contactablespicker_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
-            android:background="@color/colorPrimary"
+            android:background="@color/contactablespicker_colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
@@ -24,11 +24,11 @@
     <include layout="@layout/content_contacts_list" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/contactablespicker_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
+        android:layout_margin="@dimen/contactablespicker_fab_margin"
         app:srcCompat="@drawable/ic_add_circle_outline_black_24dp" />
 
 </android.support.design.widget.CoordinatorLayout>

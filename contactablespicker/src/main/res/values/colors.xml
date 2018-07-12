@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorBackground">#fafafa</color>
-    <color name="colorPrimary">#FFF5F5F5</color>
-    <color name="list_header_background">#DCDCF0</color>
+    <color name="contactablespicker_colorBackground">#fafafa</color>
+    <color name="contactablespicker_colorPrimary">#3F51B5</color>
+    <color name="contactablespicker_list_header_background">#DCDCF0</color>
 </resources>

@@ -51,11 +51,11 @@ public class ContactsList extends AppCompatActivity {
         setContentView(R.layout.activity_contacts_list);
 
         // Setup the Toolbar to show the application name.
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.contactablespicker_toolbar);
         setSupportActionBar(toolbar);
 
         // The Floating Action Button launches the Android contact picker.
-        FloatingActionButton fab = findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.contactablespicker_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,7 +63,7 @@ public class ContactsList extends AppCompatActivity {
             }
         });
 
-        RecyclerView mRecyclerView = findViewById(R.id.contacts_list_recycler_view);
+        RecyclerView mRecyclerView = findViewById(R.id.contactablespicker_contacts_list_recycler_view);
 
         // Set to true to improve performance if changes in content do not change the layout size of
         // the RecyclerView
@@ -205,8 +205,8 @@ public class ContactsList extends AppCompatActivity {
                     doLaunchContactPicker();
                 } else {
                     //Permission denied.
-                    Snackbar.make(findViewById(R.id.contacts_list_coordinator_layout),
-                                  R.string.permission_denied_error,
+                    Snackbar.make(findViewById(R.id.contactablespicker_contacts_list_coordinator_layout),
+                                  R.string.contactablespicker_permission_denied_error,
                                   LENGTH_LONG).show();
                 }
             }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
-    <dimen name="text_size_large">18sp</dimen>
+    <dimen name="contactablespicker_fab_margin">16dp</dimen>
+    <dimen name="contactablespicker_text_size_large">18sp</dimen>
 </resources>

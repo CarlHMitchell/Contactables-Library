@@ -141,7 +141,7 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         VHHeader(View itemView) {
             super(itemView);
-            this.txtTitle = itemView.findViewById(R.id.text_header);
+            this.txtTitle = itemView.findViewById(R.id.contactablespicker_text_header);
         }
     }
 
@@ -153,7 +153,7 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         VHItem(View itemView) {
             super(itemView);
-            this.txtData = itemView.findViewById(R.id.text_data);
+            this.txtData = itemView.findViewById(R.id.contactablespicker_text_data);
         }
     }
 }

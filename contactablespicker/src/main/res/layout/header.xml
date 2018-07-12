@@ -8,12 +8,12 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/text_header"
+            android:id="@+id/contactablespicker_text_header"
             android:layout_width="match_parent"
             android:layout_height="28dp"
-            android:background="@color/list_header_background"
+            android:background="@color/contactablespicker_list_header_background"
             android:gravity="center"
             android:textColor="#000000"
-            android:textSize="@dimen/text_size_large" />
+            android:textSize="@dimen/contactablespicker_text_size_large" />
     </android.support.v7.widget.CardView>
 </LinearLayout>
