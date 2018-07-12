@@ -1,1 +1,1 @@
-include ':app', ':contactablespicker', ':contactablespicker.sample'
+include ':contactablespicker', ':contactablespicker.sample'
