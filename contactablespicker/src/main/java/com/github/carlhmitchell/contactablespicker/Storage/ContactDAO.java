@@ -11,10 +11,14 @@ import java.util.List;
 
 @Dao
 public interface ContactDAO {
-// --Commented out by Inspection START (2018-07-10 20:56):
-//    @Query("SELECT * FROM contacts_table")
-//    List<Contact> getAll();
-// --Commented out by Inspection STOP (2018-07-10 20:56)
+
+    /**
+     * Gets a list of all contacts.
+     *
+     * @return All contacts in the database.
+     */
+    @Query("SELECT * FROM contacts_table")
+    List<Contact> getAll();
 
     /**
      * Gets a List of all Contacts from the local database as a LiveData object, for use with

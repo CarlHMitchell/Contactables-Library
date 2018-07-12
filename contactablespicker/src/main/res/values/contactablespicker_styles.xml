@@ -2,7 +2,7 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light">
-        <item name="android:windowBackground">@color/colorBackground</item>
+        <item name="android:windowBackground">@color/contactablespicker_colorBackground</item>
         <item name="android:statusBarColor">@android:color/darker_gray</item>
     </style>
 
