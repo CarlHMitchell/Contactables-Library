@@ -9,7 +9,7 @@ import android.support.annotation.NonNull;
 import java.util.List;
 
 /**
- * Contacts are represented in the local database as a name, a list of phone numbers, and a list of
+ * Contacts are represented in the local database as a name, a contactablespicker_list of phone numbers, and a contactablespicker_list of
  * email addresses.
  * This class allows manipulation of Contacts and their storage in the database using
  * Room annotations.

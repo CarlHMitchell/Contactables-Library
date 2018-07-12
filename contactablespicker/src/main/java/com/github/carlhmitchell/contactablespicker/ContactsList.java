@@ -48,7 +48,7 @@ public class ContactsList extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contacts_list);
+        setContentView(R.layout.contactablespicker_activity_contacts_list);
 
         // Setup the Toolbar to show the application name.
         Toolbar toolbar = findViewById(R.id.contactablespicker_toolbar);
@@ -106,7 +106,7 @@ public class ContactsList extends AppCompatActivity {
             }
 
             // Called when a user swipes left or right on a ViewHolder
-            // Should delete the contact in the list.
+            // Should delete the contact in the contactablespicker_list.
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 //get item position
@@ -117,8 +117,8 @@ public class ContactsList extends AppCompatActivity {
                 Log.d(DEBUG_TAG, "Item: " + item.toString());
 
                 /* The database stores Contacts, not ListItems. If the user swipes on a phone number
-                 *    or email address the contact ID is in that item's header. This finds the
-                 *    appropriate header.
+                 *    or email address the contact ID is in that item's contactablespicker_header. This finds the
+                 *    appropriate contactablespicker_header.
                  */
                 ListItem currentHeader = new ListItem();
                 for (int i = 0; i <= position; i++) {

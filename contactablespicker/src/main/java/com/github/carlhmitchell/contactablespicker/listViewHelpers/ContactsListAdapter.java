@@ -30,10 +30,10 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     /**
-     * Updates the displayed list of contact information.
-     * Also updates the cached copy of the Contacts list.
+     * Updates the displayed contactablespicker_list of contact information.
+     * Also updates the cached copy of the Contacts contactablespicker_list.
      *
-     * @param contacts New list of Contacts to display.
+     * @param contacts New contactablespicker_list of Contacts to display.
      */
     public void setContacts(List<Contact> contacts) {
         mContacts = contacts;
@@ -42,15 +42,15 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     /**
-     * Gets the list of visible contacts in the RecyclerView.
-     * @return This adapter's list of displayed contacts.
+     * Gets the contactablespicker_list of visible contacts in the RecyclerView.
+     * @return This adapter's contactablespicker_list of displayed contacts.
      */
     public List<ListItem> getList() {
         return mList;
     }
 
     /**
-     * Converts the List of Contacts into a list of displayed contacts.
+     * Converts the List of Contacts into a contactablespicker_list of displayed contacts.
      *     Displayed contacts are ListItems, either NameHeaders (contact names) or ContentItems
      *     (phone numbers and/or email addresses).
      */
@@ -86,10 +86,10 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == TYPE_HEADER) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.header, parent, false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.contactablespicker_header, parent, false);
             return new VHHeader(v);
         } else {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list, parent, false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.contactablespicker_list, parent, false);
             return new VHItem(v);
         }
     }
@@ -109,7 +109,7 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     /**
-     * Determines the type of a ListItem at a given position in the list.
+     * Determines the type of a ListItem at a given position in the contactablespicker_list.
      * @param position Position in a List of ListItems of the ListItem in question
      * @return Constant representing the type (Header or Content) of the ListItem
      */
@@ -121,15 +121,15 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     /**
-     * Gets the number of items in the list of displayed contacts.
-     * @return The size of the list of displayed contacts, or 0 if the list is null.
+     * Gets the number of items in the contactablespicker_list of displayed contacts.
+     * @return The size of the contactablespicker_list of displayed contacts, or 0 if the contactablespicker_list is null.
      */
     @Override
     public int getItemCount() {
         if (mList != null) {
             return mList.size();
         } else {
-            return 0; // can't return null for the empty list, so return 0.
+            return 0; // can't return null for the empty contactablespicker_list, so return 0.
         }
     }
 
